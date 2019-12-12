@@ -1,0 +1,12 @@
+{
+  "addons": {
+    "{abcd1234-1abc-1234-12ab-abcdef123456}": {
+      "updates": [
+        {
+          "version": "1.0",
+          "update_link": "https://frasator.github.io/bamboo-plus/bamboo+.xpi"
+        }
+      ]
+    }
+  }
+}
