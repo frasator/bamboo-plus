@@ -1,10 +1,13 @@
 var main = (mensaje) => {
     var timePrint = (minutos) => {
-        return `${Math.trunc(minutos / 60)}h ${Math.abs(minutos % 60)}m`
+	let signo = Math.sign(minutos) >= 0 ? '' : '-'
+	let horas = Math.abs(Math.trunc(minutos / 60))
+	let mins = Math.abs(minutos % 60)
+        return `${signo}${horas}h ${mins}m`
     }
     var timePrintNegative = (minutos) => {
         let stl = `color:#e53935;`
-        let res = `${Math.trunc(minutos / 60)}h ${Math.abs(minutos % 60)}m`
+        let res = timePrint(minutos)
         if(minutos < 0){
             return `<i style="${stl}">${res}</i>`
         }else{
