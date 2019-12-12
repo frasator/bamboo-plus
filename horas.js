@@ -1,4 +1,3 @@
-console.log('test')
 var main = (mensaje) => {
     var timePrint = (minutos) => {
         return `${Math.trunc(minutos / 60)}h ${Math.abs(minutos % 60)}m`
