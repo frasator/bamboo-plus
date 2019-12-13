@@ -4,8 +4,8 @@ var main = (mensaje) => {
 	
     var getHoraSalidaHoy = (minutosRestantes) => {
 	let salida = new Date(Date.now() + minutosRestantes*60000)
-	return `${salida.getHours()}:${salida.getMinutes()}:${salida.getSeconds() 
-	    	<span class="ks">${salida.getDate()} ${meses[salida.getMonth()]}</span>`
+	return `${salida.getHours()}:${salida.getMinutes()}:${salida.getSeconds()} 
+	    	<span class="ks"> ${salida.getDate()} ${meses[salida.getMonth()]}</span>`
     }
     var timePrint = (minutos) => {
 	let signo = Math.sign(minutos) >= 0 ? '' : '-'
