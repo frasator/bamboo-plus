@@ -1,9 +1,8 @@
 var main = (mensaje) => {
 	
-    var getHoraSalidaHoy = (minutosATrabajar) => {
-	let ahora = new Date()
-	let salida = new Date(ahora.getTime() + minutosATrabajar*60000)
-	return `${salida.getHours()}h ${salida.getMinutes()}m`
+    var getHoraSalidaHoy = (minutosRestantes) => {
+	let salida = new Date(Date.now() + minutosRestantes*60000)
+	return `${salida.getHours()}:${salida.getMinutes()}:${salida.getSeconds()}`
     }
     var timePrint = (minutos) => {
 	let signo = Math.sign(minutos) >= 0 ? '' : '-'
@@ -180,7 +179,7 @@ var main = (mensaje) => {
         <span style="${ks}"> para irte hoy </span>
 	<br>
  	<span style="${ks}"> hora de salida </span>
- 	<span style="${vs8}">${getHoraSalidaHoy((hastaHoy.minutosATrabajar - hastaHoy.minutosTrabajados))}</span>
+ 	<span style="${vs8}">${getHoraSalidaHoy(hastaHoy.minutosATrabajar - hastaHoy.minutosTrabajados)}</span>
 
         <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
 
