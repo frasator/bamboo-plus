@@ -1,4 +1,10 @@
 var main = (mensaje) => {
+	
+    var getHoraSalidaHoy = (minutosATrabajar) => {
+	let ahora = new Date()
+	let salida = new Date(ahora.getTime() + minutosATrabajar*60000)
+	return `${salida.getHours()}h ${salida.getMinutes()}m`
+    }
     var timePrint = (minutos) => {
 	let signo = Math.sign(minutos) >= 0 ? '' : '-'
 	let horas = Math.abs(Math.trunc(minutos / 60))
@@ -146,6 +152,7 @@ var main = (mensaje) => {
     let vs5 = `${vs}color:#FF6F00;font-size:18px`
     let vs6 = `${vs}color:#888;font-size:16px`
     let vs7 = `${vs}color:#4CAF50;font-size:20px`
+    let vs8 = `${vs}color:#26C6DA;font-size:18px`
 
     var hoyHTML = ``
     if (parsedHoy != null) {
@@ -171,6 +178,9 @@ var main = (mensaje) => {
         <br>
         <span style="${vs5}">${timePrintNegative(hastaHoy.minutosATrabajar - hastaHoy.minutosTrabajados)}</span>
         <span style="${ks}"> para irte hoy </span>
+	<br>
+ 	<span style="${ks}"> hora de salida </span>
+ 	<span style="${vs8}">${getHoraSalidaHoy((hastaHoy.minutosATrabajar - hastaHoy.minutosTrabajados))}</span>
 
         <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
 
