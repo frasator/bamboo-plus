@@ -14,7 +14,7 @@ var main = (mensaje) => {
 	
     var getHoraSalidaHoy = (minutosRestantes) => {
 	let salida = new Date(Date.now() + minutosRestantes*60000)
-	return `${salida.getHours()}:${salida.getMinutes()}} 
+	return `${salida.getHours()}:${salida.getMinutes()}
 	    	<span class="${ks}"> ${salida.getDate()} ${meses[salida.getMonth()]}</span>`
     }
     var timePrint = (minutos) => {
