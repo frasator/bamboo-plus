@@ -152,7 +152,7 @@ var main = (mensaje) => {
     let vs5 = `${vs}color:#FF6F00;font-size:18px`
     let vs6 = `${vs}color:#888;font-size:16px`
     let vs7 = `${vs}color:#4CAF50;font-size:20px`
-    let vs8 = `${vs}color:#26C6DA;font-size:18px`
+    let vs8 = `${vs}color:#00ACC1;font-size:18px`
 
     var hoyHTML = ``
     if (parsedHoy != null) {
