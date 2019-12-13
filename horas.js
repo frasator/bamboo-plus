@@ -178,7 +178,7 @@ var main = (mensaje) => {
         <span style="${vs5}">${timePrintNegative(hastaHoy.minutosATrabajar - hastaHoy.minutosTrabajados)}</span>
         <span style="${ks}"> para irte hoy </span>
 	<br>
- 	<span style="${ks}"> hora de salida </span>
+ 	<span style="${ks}"> hora estimada de salida</span>
  	<span style="${vs8}">${getHoraSalidaHoy(hastaHoy.minutosATrabajar - hastaHoy.minutosTrabajados)}</span>
 
         <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
