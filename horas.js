@@ -32,13 +32,16 @@ var main = (mensaje) => {
     const diaId = `${split[0]}-${split[1]}-${cero}${dayDate}`
     return dias[diaId]
   }
-  var getMinutosGuardiaFromDia = (dia) => {
+  var getMinutosGuardiaFromDia = (dia, diaEl) => {
     let minutos = 0
     if (dia.note != null) {
-      if (dia.note.toLowerCase().indexOf('guardia') != -1) {
+      if (dia.note.toLowerCase().trim().indexOf('guardia') != -1) {
         var hrs = parseInt(Number(dia.totalHours));
         var min = Math.round((Number(dia.totalHours) - hrs) * 60);
         minutos = (hrs * 60) + min
+        var auxEl = diaEl.querySelector('.TimesheetSlat__dayTotal')
+        var auxHTML = auxEl.innerHTML
+        auxEl.innerHTML = `${auxHTML} <span style="${vs9}">${dia.note}</span>`
       }
     }
     return minutos
@@ -86,7 +89,7 @@ var main = (mensaje) => {
       const dayDate = el.querySelector('.TimesheetSlat__dayDate').innerText.toLowerCase()
 
       let dia = getDayFromEl(el)
-      minutosGuardia += getMinutosGuardiaFromDia(dia)
+      minutosGuardia += getMinutosGuardiaFromDia(dia, el)
 
       /* Trabajados */
       let parsed_a = parseTimeText(el)
