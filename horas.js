@@ -211,7 +211,7 @@ var main = (mensaje) => {
         <span style="${ks}">Guardias</span>
         &nbsp; &nbsp; 
         <span style="${vs9}">${timePrint(mes.minutosGuardia)}</span>
-        <div style="height:1px;background-color:lightgray;margin:5px 0"></div>
+        <div style="height:1px;background-color:#e3e3e3;margin:5px 0"></div>
 		`
   }
 
@@ -229,9 +229,9 @@ var main = (mensaje) => {
         <br>
         <span style="${vs5}">${timePrintNegative(hastaHoy.minutosATrabajar - hastaHoy.minutosTrabajados)}</span>
         <span style="${ks}"> para irte hoy </span>
-	<div style="height:1px;background-color:lightgray;margin:5px 0"></div>
- 	<span style="${ks}"> hora de salida</span>
- 	<span style="${vs8}">${getHoraSalidaHoy(hastaHoy.minutosATrabajar - hastaHoy.minutosTrabajados)}</span>
+	      <div style="height:1px;background-color:#e3e3e3;margin:5px 0"></div>
+ 	      <span style="${ks}"> hora de salida</span>
+ 	      <span style="${vs8}">${getHoraSalidaHoy(hastaHoy.minutosATrabajar - hastaHoy.minutosTrabajados)}</span>
 
         <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
 
@@ -249,7 +249,7 @@ var main = (mensaje) => {
         <span style="${vs1}">${mes.diasATrabajar + mes.mediosDiasATrabajar / 2}</span>
         &nbsp;
         <span style="${ks}">D&iacute;as de trabajo</span>
-		<br>
+		    <br>
         <span style="${vs3}">${mes.diasOtros}</span>
         &nbsp;
         <span style="${ks}">Otros d&iacute;as</span>
