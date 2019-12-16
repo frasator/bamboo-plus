@@ -9,7 +9,7 @@ localStorage.setItem(timesheet.id, JSON.stringify(timesheet));
 
 const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
 const ks = `display:inline-block;color:#666;`
-const vs = `font-family:'BhrHeaderFont', 'Trebuchet MS';display:inline-block;`
+const vs = `display:inline-block;`
 const vs1 = `${vs}width:26px;color:#BA68C8;font-size:18px;`
 const vs2 = `${vs}color:#4CAF50;font-size:18px`
 const vs3 = `${vs}width:26px;color:#EC407A;font-size:18px`
@@ -21,203 +21,229 @@ const vs8 = `${vs}color:#00ACC1;font-size:16px`
 const vs9 = `${vs}color:#ff1744;font-size:16px`
 
 var main = (mensaje) => {
-  var jsonNode = document.querySelector('#js-timesheet-data')
-  var jsonData = JSON.parse(jsonNode.innerText)
-  var dias = jsonData.timesheet.dailyDetails
+    var jsonNode = document.querySelector('#js-timesheet-data')
+    var jsonData = JSON.parse(jsonNode.innerText)
+    var dias = jsonData.timesheet.dailyDetails
 
-  var getDayFromEl = (el) => {
-    const dayDate = parseInt(el.querySelector('.TimesheetSlat__dayDate').innerText.toLowerCase().split(' ')[1])
-    const split = Object.keys(dias)[0].split('-')
-    let cero = (dayDate < 10) ? '0' : ''
-    const diaId = `${split[0]}-${split[1]}-${cero}${dayDate}`
-    return dias[diaId]
-  }
-  var getMinutosGuardiaFromDia = (dia, diaEl) => {
-    let minutos = 0
-    if (dia.note != null) {
-      if (dia.note.toLowerCase().trim().indexOf('guardia') != -1) {
-        var hrs = parseInt(Number(dia.totalHours));
-        var min = Math.round((Number(dia.totalHours) - hrs) * 60);
-        minutos = (hrs * 60) + min
-        var auxEl = diaEl.querySelector('.TimesheetSlat__dayTotal')
-        var auxHTML = auxEl.innerHTML
-        auxEl.innerHTML = `${auxHTML} <span style="${vs9}">${dia.note}</span>`
-      }
+    var getDayFromEl = (el) => {
+        const dayDate = parseInt(el.querySelector('.TimesheetSlat__dayDate').innerText.toLowerCase().split(' ')[1])
+        const split = Object.keys(dias)[0].split('-')
+        let cero = (dayDate < 10) ? '0' : ''
+        const diaId = `${split[0]}-${split[1]}-${cero}${dayDate}`
+        return dias[diaId]
     }
-    return minutos
-  }
-  var getHoraSalidaHoy = (minutosRestantes) => {
-    let salida = new Date(Date.now() + minutosRestantes * 60000)
-    return `${salida.getHours()}:${salida.getMinutes()}
-	    	<span class="${ks}"> ${salida.getDate()} ${meses[salida.getMonth()]}</span>`
-  }
-  var timePrint = (minutos) => {
-    let signo = Math.sign(minutos) >= 0 ? '' : '-'
-    let horas = Math.abs(Math.trunc(minutos / 60))
-    let mins = Math.abs(minutos % 60)
-    return `${signo}${horas}h ${mins}m`
-  }
-  var timePrintNegative = (minutos) => {
-    let stl = `color:#e53935;`
-    let res = timePrint(minutos)
-    if (minutos < 0) {
-      return `<i style="${stl}">${res}</i>`
-    } else {
-      return res
-    }
-  }
-  var calcMinutosTrabajo = (dias, mediosDias) => {
-    return (dias * ((60 * 7) + 45)) + (mediosDias * 4 * 60)
-  }
-  var parseTimeText = (el) => {
-    let textTime = el.querySelector('.TimesheetSlat__dayTotal').innerText
-    let parsedHours = parseInt(textTime.split('h')[0])
-    let parsedMinutes = parseInt(textTime.split(' ')[1].split('m')[0])
-    return { hours: parsedHours, minutes: parsedMinutes }
-  }
-
-  calcularMinutosATrabajar = (els) => {
-    var minutosTrabajados = 0;
-    var diasATrabajar = 0
-    var mediosDiasATrabajar = 0
-    var minutosMedicalAppointments = 0
-    var diasOtros = 0
-    var minutosGuardia = 0
-    for (var i = 0; i < els.length; i++) {
-      let el = els[i]
-      const dayName = el.querySelector('.TimesheetSlat__dayOfWeek').innerText.toLowerCase()
-      const dayDate = el.querySelector('.TimesheetSlat__dayDate').innerText.toLowerCase()
-
-      let dia = getDayFromEl(el)
-      minutosGuardia += getMinutosGuardiaFromDia(dia, el)
-
-      /* Trabajados */
-      let parsed_a = parseTimeText(el)
-      minutosTrabajados += parsed_a.hours * 60
-      minutosTrabajados += parsed_a.minutes
-
-      /* A trabajar */
-      if (dayName != "sat" && dayName != "sun" && dayName != "sáb" && dayName != "dom") {
-        let extra = el.querySelector('.TimesheetSlat__extraInfoItem--clockPush')
-        if (extra == null) {
-          diasATrabajar++
-        } else {
-          if (extra.innerText.indexOf('0.5 days Holidays') != -1
-            || extra.innerText.indexOf('0.5 days Additional Days Off') != -1) {
-            diasOtros += 0.5
-            mediosDiasATrabajar += 1
-          } else if (extra.innerText.indexOf('hours Medical Appointments') != -1) {
-            let parsed = parseTimeText(el)
-            minutosMedicalAppointments += parsed.hours * 60
-            minutosMedicalAppointments += parsed.minutes
-          } else {
-            diasOtros++
-          }
-          // Private Leave
-          // Compensation:
-          // Holydays
-          // Business Trips
+    var getMinutosGuardiaFromDia = (dia, diaEl) => {
+        let minutos = 0
+        if (dia.note != null) {
+            if (dia.note.toLowerCase().trim().indexOf('guardia') != -1) {
+                var hrs = parseInt(Number(dia.totalHours));
+                var min = Math.round((Number(dia.totalHours) - hrs) * 60);
+                minutos = (hrs * 60) + min
+                var auxEl = diaEl.querySelector('.TimesheetSlat__dayTotal')
+                var elNote = auxEl.querySelector('.nota')
+                if(elNote == null){
+                    elNote = document.createElement('span')
+                    elNote.classList.add('nota')
+                    elNote.style = `${vs9};padding-left:10px;`
+                    auxEl.appendChild(elNote)
+                }
+                elNote.innerHTML = dia.note
+            }
         }
-      }
+        return minutos
     }
-    var minutosATrabajar = calcMinutosTrabajo(diasATrabajar, mediosDiasATrabajar)
-    minutosATrabajar += minutosMedicalAppointments
-
-    return {
-      minutosATrabajar: minutosATrabajar,
-      minutosTrabajados: minutosTrabajados,
-      diasOtros: diasOtros,
-      diasATrabajar: diasATrabajar,
-      mediosDiasATrabajar: mediosDiasATrabajar,
-      minutosGuardia: minutosGuardia
+    var getHoraSalidaHoy = (minutosRestantes) => {
+        let salida = new Date(Date.now() + minutosRestantes * 60000)
+        return `${salida.getHours()}:${salida.getMinutes()}
+	    	<span class="${ks}"> ${salida.getDate()} ${meses[salida.getMonth()]}</span>`
+    }
+    var timePrint = (minutos) => {
+        let signo = Math.sign(minutos) >= 0 ? '' : '-'
+        let horas = Math.abs(Math.trunc(minutos / 60))
+        let mins = Math.abs(minutos % 60)
+        return `${signo}${horas}h ${mins}m`
+    }
+    var timePrintNegative = (minutos) => {
+        let stl = `color:#e53935;`
+        let res = timePrint(minutos)
+        if (minutos < 0) {
+            return `<i style="${stl}">${res}</i>`
+        } else {
+            return res
+        }
+    }
+    var calcMinutosTrabajo = (dias, mediosDias) => {
+        return (dias * ((60 * 7) + 45)) + (mediosDias * 4 * 60)
+    }
+    var parseTimeText = (el) => {
+        let textTime = el.querySelector('.TimesheetSlat__dayTotal').innerText
+        let parsedHours = parseInt(textTime.split('h')[0])
+        let parsedMinutes = parseInt(textTime.split(' ')[1].split('m')[0])
+        return { hours: parsedHours, minutes: parsedMinutes }
     }
 
-  }
+    calcularMinutosATrabajar = (els) => {
+        var minutosTrabajados = 0;
+        var diasATrabajar = 0
+        var mediosDiasATrabajar = 0
+        var minutosMedicalAppointments = 0
+        var diasOtros = 0
+        var minutosGuardia = 0
+        for (var i = 0; i < els.length; i++) {
+            let el = els[i]
+            const dayName = el.querySelector('.TimesheetSlat__dayOfWeek').innerText.toLowerCase()
+            const dayDate = el.querySelector('.TimesheetSlat__dayDate').innerText.toLowerCase()
 
+            let dia = getDayFromEl(el)
+            minutosGuardia += getMinutosGuardiaFromDia(dia, el)
 
-  var aux1 = document.querySelector('.TimesheetEntries')
-  var diasMesConFinde = aux1.querySelectorAll('.TimesheetSlat:not(.TimesheetSlat--disabled)')
-  // var diasMesSinFinde = aux1.querySelectorAll('.TimesheetSlat:not(.TimesheetSlat--disabled):not(.js-timesheet-showWeekends)')
+            /* Trabajados */
+            let parsed_a = parseTimeText(el)
+            minutosTrabajados += parsed_a.hours * 60
+            minutosTrabajados += parsed_a.minutes
 
-  var hoyEl = aux1.querySelector('.TimesheetSlat--today')
-  var diasHastaHoy = []
-  for (var i = 0; i < diasMesConFinde.length; i++) {
-    let el = diasMesConFinde[i]
-    diasHastaHoy.push(el)
-    if (el == hoyEl) {
-      break
+            /* A trabajar */
+            if (dayName != "sat" && dayName != "sun" && dayName != "sáb" && dayName != "dom") {
+                let extra = el.querySelector('.TimesheetSlat__extraInfoItem--clockPush')
+                if (extra == null) {
+                    diasATrabajar++
+                } else {
+                    if (extra.innerText.indexOf('0.5 days Holidays') != -1
+                        || extra.innerText.indexOf('0.5 days Additional Days Off') != -1) {
+                        diasOtros += 0.5
+                        mediosDiasATrabajar += 1
+                    } else if (extra.innerText.indexOf('hours Medical Appointments') != -1) {
+                        let parsed = parseTimeText(el)
+                        minutosMedicalAppointments += parsed.hours * 60
+                        minutosMedicalAppointments += parsed.minutes
+                    } else {
+                        diasOtros++
+                    }
+                    // Private Leave
+                    // Compensation:
+                    // Holydays
+                    // Business Trips
+                }
+            }
+        }
+        var minutosATrabajar = calcMinutosTrabajo(diasATrabajar, mediosDiasATrabajar)
+        minutosATrabajar += minutosMedicalAppointments
+
+        return {
+            minutosATrabajar: minutosATrabajar,
+            minutosTrabajados: minutosTrabajados,
+            diasOtros: diasOtros,
+            diasATrabajar: diasATrabajar,
+            mediosDiasATrabajar: mediosDiasATrabajar,
+            minutosGuardia: minutosGuardia
+        }
+
     }
-  }
-  // var weeks = []
-  // var weekNum = 0
-  // for (var i = 0; i < diasMesConFinde.length; i++) {
-  //     let el = diasMesConFinde[i]
-  //     const dayName = el.querySelector('.TimesheetSlat__dayOfWeek').innerText
-  //     const dayDate = el.querySelector('.TimesheetSlat__dayDate').innerText
-
-  //     if (weeks[weekNum] == null) {
-  //         weeks[weekNum] = []
-  //     }
-  //     if (dayName == "Mon") {
-  //         if (weeks[weekNum].length == 0) {
-  //             weeks[weekNum].push(el)
-  //         } else {
-  //             weekNum += 1
-  //             weeks[weekNum] = []
-  //             weeks[weekNum].push(el)
-  //         }
-  //     } else {
-  //         weeks[weekNum].push(el)
-  //     }
-  // }
-
-  /* Mes */
-  var mes = calcularMinutosATrabajar(diasMesConFinde)
 
 
-  /* Hoy */
-  var parsedHoy
-  if (hoyEl) {
-    parsedHoy = parseTimeText(hoyEl)
-  }
+    var aux1 = document.querySelector('.TimesheetEntries')
+    var diasMesConFinde = aux1.querySelectorAll('.TimesheetSlat:not(.TimesheetSlat--disabled)')
+    // var diasMesSinFinde = aux1.querySelectorAll('.TimesheetSlat:not(.TimesheetSlat--disabled):not(.js-timesheet-showWeekends)')
+
+    var hoyEl = aux1.querySelector('.TimesheetSlat--today')
+    var diasHastaHoy = []
+    for (var i = 0; i < diasMesConFinde.length; i++) {
+        let el = diasMesConFinde[i]
+        diasHastaHoy.push(el)
+        if (el == hoyEl) {
+            break
+        }
+    }
+    // var weeks = []
+    // var weekNum = 0
+    // for (var i = 0; i < diasMesConFinde.length; i++) {
+    //     let el = diasMesConFinde[i]
+    //     const dayName = el.querySelector('.TimesheetSlat__dayOfWeek').innerText
+    //     const dayDate = el.querySelector('.TimesheetSlat__dayDate').innerText
+
+    //     if (weeks[weekNum] == null) {
+    //         weeks[weekNum] = []
+    //     }
+    //     if (dayName == "Mon") {
+    //         if (weeks[weekNum].length == 0) {
+    //             weeks[weekNum].push(el)
+    //         } else {
+    //             weekNum += 1
+    //             weeks[weekNum] = []
+    //             weeks[weekNum].push(el)
+    //         }
+    //     } else {
+    //         weeks[weekNum].push(el)
+    //     }
+    // }
+
+    /* Mes */
+    var mes = calcularMinutosATrabajar(diasMesConFinde)
 
 
-  /* HTML */
-  var imgEl = document.querySelector('.TimesheetSummary__photo')
-  var div = document.querySelector('#infoextra')
-  if (!div) {
-    div = document.createElement('div')
-    div.style.marginBottom = '2px'
-    div.style.padding = '0'
-    div.style.textAlign = 'left'
-    div.id = 'infoextra'
-    imgEl.parentNode.insertBefore(div, imgEl)
-  }
+    /* Hoy */
+    var parsedHoy
+    if (hoyEl) {
+        parsedHoy = parseTimeText(hoyEl)
+    }
 
-  var hoyHTML = ``
-  if (parsedHoy != null) {
-    hoyHTML = `
+
+    /* HTML */
+    var siblingEl = document.querySelector('.TimesheetSummary__photo')
+    var div = document.querySelector('#infoextra')
+    if (!div) {
+        div = document.createElement('div')
+        div.style.padding = '0 0 10px 0'
+        div.style.margin = '0 0 10px 0'
+        div.style.textAlign = 'left'
+        div.style.backgroundColor = '#f6f6f6'
+        div.style.borderBottom = '1px solid lightgray'
+        div.id = 'infoextra'
+
+        let closeCont = document.createElement('div')
+        closeCont.style = 'display:flex;align-items:center;justify-content:flex-end'
+        let close = document.createElement('div')
+        close.style = `font-family:Times New Roman;font-style:italic;font-weight:bold;
+                    background-color:#fafafa;
+                    cursor:pointer;padding:2px 7px 3px 7px;line-height:15px;border:1px solid #ddd;`
+        close.innerHTML = 'i'
+        closeCont.appendChild(close)
+
+        close.addEventListener('click', e => {
+            if (div.style.display == 'none') {
+                div.style.display = ''
+            } else {
+                div.style.display = 'none'
+            }
+        })
+        siblingEl.parentNode.insertBefore(div, siblingEl)
+        siblingEl.parentNode.insertBefore(closeCont, div)
+    }
+
+    var hoyHTML = ``
+    if (parsedHoy != null) {
+        hoyHTML = `
         <span style="${ks}">Hoy</span>
         &nbsp; &nbsp; 
 		<span style="${vs7}">${parsedHoy.hours}h ${parsedHoy.minutes}m</span>
         ${((parsedHoy.hours * 60) + parsedHoy.minutes >= 465) ? `<br><span style="${vs6}">${mensaje}</span>` : ''}
         <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
 		`
-  }
+    }
 
-  var guardiasHTML = ``
-  if (mes.minutosGuardia > 0) {
-    guardiasHTML = `
+    var guardiasHTML = ``
+    if (mes.minutosGuardia > 0) {
+        guardiasHTML = `
         <span style="${ks}">Guardias</span>
         &nbsp; &nbsp; 
         <span style="${vs9}">${timePrint(mes.minutosGuardia)}</span>
         <div style="height:1px;background-color:#e3e3e3;margin:5px 0"></div>
 		`
-  }
+    }
 
-  var hastaHoy = calcularMinutosATrabajar(diasHastaHoy)
+    var hastaHoy = calcularMinutosATrabajar(diasHastaHoy)
 
-  div.innerHTML = `
+    div.innerHTML = `
         ${guardiasHTML}
         ${hoyHTML}
 
@@ -253,39 +279,35 @@ var main = (mensaje) => {
         <span style="${vs3}">${mes.diasOtros}</span>
         &nbsp;
         <span style="${ks}">Otros d&iacute;as</span>
-
-        <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
-        <br>
 	`
 }
 var mensajesSubliminales = [
-  'Vete a casa o te reviento!',
-  'Qué haces aquí matat!',
-  'Eres un puto loser!',
-  'Cosas que hay que saber: vete a casa!',
-  'Fuera de aquí, subnormal!',
-  'Deja de regalar tu tiempo, inútil',
-  'No le importas a nadie, vete de aquí!',
-  'Quedas expulsado. Adiós!',
-  'Llegas tarde a tu puta casa',
-  'Asumimos que en tu casa no te quieren',
-  'Eres libre, bienvenido a la irrealidad',
-  'Sei una covarianza',
-  'Fuera de aquí, retromónguer!',
-  'Lárgate o recibirás el CD de los chistes de Quino. :D',
-  'Di en alto  ♬ Pollo Pollo Polla ♬ y vete!'
+    'Vete a casa o te reviento!',
+    'Qué haces aquí matat!',
+    'Eres un puto loser!',
+    'Cosas que hay que saber: vete a casa!',
+    'Fuera de aquí, subnormal!',
+    'Deja de regalar tu tiempo, inútil',
+    'No le importas a nadie, vete de aquí!',
+    'Quedas expulsado. Adiós!',
+    'Llegas tarde a tu puta casa',
+    'Asumimos que en tu casa no te quieren',
+    'Eres libre, bienvenido a la irrealidad',
+    'Sei una covarianza',
+    'Fuera de aquí, retromónguer!',
+    'Lárgate o recibirás el CD de los chistes de Quino. :D',
+    'Di en alto  ♬ Pollo Pollo Polla ♬ y vete!'
 ]
 var msLen = mensajesSubliminales.length
 var getRandomInt = (min, max) => {
-  return Math.floor(Math.random() * (max - min)) + min;
+    return Math.floor(Math.random() * (max - min)) + min;
 }
 
 if (window.location.href.indexOf('employees/timesheet/?id=') != -1) {
-  let mensajeIdx = getRandomInt(0, msLen - 1)
-  let mensaje = mensajesSubliminales[mensajeIdx]
-  main(mensaje)
-  setInterval(() => { main(mensaje) }, 5000)
-  document.querySelector('#contentTop').style.visibility = 'hidden'
-  document.querySelector('#employeePhoto').style.visibility = 'hidden'
-  document.querySelector('h1.logoImg').style.visibility = 'hidden'
+    let mensajeIdx = getRandomInt(0, msLen - 1)
+    let mensaje = mensajesSubliminales[mensajeIdx]
+    main(mensaje)
+    setInterval(() => { main(mensaje) }, 5000)
+    document.querySelector('#employeePhoto').style.visibility = 'hidden'
+    document.querySelector('.PageHeader__titleWrap').style.visibility = 'hidden'
 }
