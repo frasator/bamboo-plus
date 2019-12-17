@@ -217,6 +217,7 @@ class Bamboonomix {
         const vs7 = `${vs}color:#4CAF50;font-size:20px`
         const vs8 = `${vs}color:#00ACC1;font-size:16px`
         const vs9 = `${vs}color:#C2185B;font-size:16px`
+        const vs10 = `${vs}color:#BA68C8;font-size:16px`
 
         var aux1 = document.querySelector('.TimesheetEntries')
         var diasMesConFinde = aux1.querySelectorAll('.TimesheetSlat:not(.TimesheetSlat--disabled)')
@@ -306,6 +307,7 @@ class Bamboonomix {
             ${hoyHTML}
 
             <span style="${ks}">Hasta hoy</span>
+            <span style="${vs10};padding-left:30px;">día ${hastaHoy.diasATrabajar} de ${mes.diasATrabajar}</span>
             <br>
             <span style="${vs2}">${this.timePrint(hastaHoy.minTrabajadosMenosGuardias)}</span>
             <span style="${ks}">&nbsp; de &nbsp;</span>
