@@ -126,16 +126,19 @@ class Bamboonomix {
     calcularMinutosATrabajar(els) {
         var minutosTrabajados = 0;
         var diasATrabajar = 0
+        var diasOtros = 0
         var mediosDiasATrabajar = 0
         var minutosMedicalAppointments = 0
-        var diasOtros = 0
         var minutosGuardia = 0
+
+
         for (var i = 0; i < els.length; i++) {
             let el = els[i]
             const dayName = el.querySelector('.TimesheetSlat__dayOfWeek').innerText.toLowerCase()
             const dayDate = el.querySelector('.TimesheetSlat__dayDate').innerText.toLowerCase()
 
             let dia = this.getDayFromEl(el)
+            // console.log(dia)
             minutosGuardia += this.getMinutosGuardiaFromDia(dia, el)
 
             /* Trabajados */
@@ -144,27 +147,47 @@ class Bamboonomix {
             minutosTrabajados += parsed_a.minutes
 
             /* A trabajar */
+            let extra = el.querySelector('.TimesheetSlat__extraInfoItem--clockPush')
+
             if (dayName != "sat" && dayName != "sun" && dayName != "sáb" && dayName != "dom") {
-                let extra = el.querySelector('.TimesheetSlat__extraInfoItem--clockPush')
-                if (extra == null) {
-                    diasATrabajar++
-                } else {
-                    if (extra.innerText.indexOf('0.5 days Holidays') != -1
-                        || extra.innerText.indexOf('0.5 days Additional Days Off') != -1) {
+                if (dia.holidays.length > 0) {
+                    diasOtros++
+                } else if (dia.timeOff.length > 0) {
+                    if (dia.timeOffHours == 4) {
                         diasOtros += 0.5
                         mediosDiasATrabajar += 1
-                    } else if (extra.innerText.indexOf('hours Medical Appointments') != -1) {
-                        let parsed = this.parseTimeText(el)
-                        minutosMedicalAppointments += parsed.hours * 60
-                        minutosMedicalAppointments += parsed.minutes
                     } else {
                         diasOtros++
                     }
-                    // Private Leave
-                    // Compensation:
-                    // Holydays
-                    // Business Trips
+                } else if (extra != null && extra.innerText.indexOf('hours Medical Appointments') != -1) {
+                    let parsed = this.parseTimeText(el)
+                    minutosMedicalAppointments += parsed.hours * 60
+                    minutosMedicalAppointments += parsed.minutes
+                } else {
+                    diasATrabajar++
                 }
+                //
+                //
+                // let extra = el.querySelector('.TimesheetSlat__extraInfoItem--clockPush')
+                // if (extra == null) {
+                //     diasATrabajar++
+                // } else {
+                //     if (extra.innerText.indexOf('0.5 days Holidays') != -1
+                //         || extra.innerText.indexOf('0.5 days Additional Days Off') != -1) {
+                //         diasOtros += 0.5
+                //         mediosDiasATrabajar += 1
+                //     } else if (extra.innerText.indexOf('hours Medical Appointments') != -1) {
+                //         let parsed = this.parseTimeText(el)
+                //         minutosMedicalAppointments += parsed.hours * 60
+                //         minutosMedicalAppointments += parsed.minutes
+                //     } else {
+                //         diasOtros++
+                //     }
+                //     // Private Leave
+                //     // Compensation:
+                //     // Holydays
+                //     // Business Trips
+                // }
             }
         }
         var minutosATrabajar = this.calcMinutosTrabajo(diasATrabajar, mediosDiasATrabajar)
