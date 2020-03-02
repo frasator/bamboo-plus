@@ -122,7 +122,7 @@ class Bamboonomix {
         }
     }
     calcMinutosTrabajo(dias, mediosDias) {
-        return (dias * (this.getMinutosJornada()) + (mediosDias * 4 * 60)
+        return (dias * (this.getMinutosJornada())) + (mediosDias * 4 * 60)
     }
     parseTimeText(el) {
         let textTime = el.querySelector('.TimesheetSlat__dayTotal').innerText
