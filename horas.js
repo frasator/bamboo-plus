@@ -1,4 +1,12 @@
 class Bamboonomix {
+    getMinutosJornada(){
+	let mj = localStorage.getItem('minutosJornada')
+	if(mj == null){
+	    return 465
+	}else{
+           return parseInt(mj)
+	}
+    }
     constructor() {
         if (window.location.href.indexOf('employees/timesheet/?id=') != -1) {
             this.meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
@@ -114,7 +122,7 @@ class Bamboonomix {
         }
     }
     calcMinutosTrabajo(dias, mediosDias) {
-        return (dias * ((60 * 7) + 45)) + (mediosDias * 4 * 60)
+        return (dias * (getMinutosJornada()) + (mediosDias * 4 * 60)
     }
     parseTimeText(el) {
         let textTime = el.querySelector('.TimesheetSlat__dayTotal').innerText
@@ -305,7 +313,7 @@ class Bamboonomix {
             hoyHTML = `
                 <span style="${ks}">Hoy: </span>
                 <span style="${vs7}">${parsedHoy.hours}h ${parsedHoy.minutes}m</span>
-                ${((parsedHoy.hours * 60) + parsedHoy.minutes >= 465) ? `<br><span style="${vs6}">${mensaje}</span>` : ''}
+                ${((parsedHoy.hours * 60) + parsedHoy.minutes >= getMinutosJornada()) ? `<br><span style="${vs6}">${mensaje}</span>` : ''}
                 <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
 		    `
         }
