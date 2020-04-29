@@ -321,6 +321,7 @@ class Bamboonomix {
         var guardiasHastaHoyHTML = ``
         if (hastaHoy.minutosGuardia > 0) {
             guardiasHastaHoyHTML = `
+		<br>
                 <span style="${ks}">Guardias: </span>
                 <span style="${vs9}">${this.timePrint(hastaHoy.minutosGuardia)}</span>
 		    `
