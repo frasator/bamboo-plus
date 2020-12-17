@@ -395,6 +395,7 @@ class Bamboonomix {
           <span style="${ks}">Restante este mes:</span>
           <span style="${vs5}">${this.timePrintNegative(mes.minutosATrabajar - mes.minTrabajadosMenosGuardias)}</span>
           ${guardiasMesHTML}
+          <br>
 
           <span style="${vs1}">${mes.diasATrabajar + mes.mediosDiasATrabajar / 2}</span>
           &nbsp;
