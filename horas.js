@@ -498,5 +498,4 @@ class Bamboonomix {
     return Math.floor(Math.random() * (max - min)) + min;
   }
 }
-window.Bamboonomix = Bamboonomix
 new Bamboonomix()
