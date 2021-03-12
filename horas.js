@@ -256,6 +256,7 @@ class Bamboonomix {
     return weeks
   }
   pinta(mensaje) {
+    this.lastMensaje = mensaje
     const ks = `display:inline-block;color:#666;font-size:14px;`
     const vs = `display:inline-block;`
     const vs1 = `${vs}width:26px;color:#BA68C8;font-size:16px;`
@@ -361,11 +362,12 @@ class Bamboonomix {
     }
 
 
-    let year = this.getYearHistory()
+    let year = this.getYearHistory(this.getYearSelectValue())
     var guardiasAñoHTML = (year.minutosGuardia > 0) ?
       `<span style="${ks}">Guardias: </span>
      <span style="${vs9}">${this.timePrint(year.minutosGuardia)}</span>
     ` : ``
+
 
     div.innerHTML = `
           ${hoyHTML}
@@ -409,7 +411,7 @@ class Bamboonomix {
           <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
 
           <span style="${ks}">Este año  <i> *beta</i></span>
-          <br>
+          <div id="yearSelectParent"></div>
           ${year.months.map(m => `
             <span style="${m.horas == 'sin cargar' ? vs11 : ks};width:2.5em;">${m.nombre}:</span>
             <span style="${m.horas == '0h 0m' ? ks : m.horas == 'sin cargar' ? ks : vs5}">${m.horas}</span><br>
@@ -419,16 +421,50 @@ class Bamboonomix {
           <span style="${ks}"> de </span>
           <span style="${vs4}">${this.timePrint(year.minutosATrabajar)}</span>
           <br>
-          <span style="${ks}">Restante este año:</span>
+          <span style="${ks}">Restante hasta fin de ${year.months[0].nombre}:</span>
           <span style="${vs5}">${this.timePrintNegative(year.minutosATrabajar - year.minTrabajadosMenosGuardias)}</span>
           ${guardiasAñoHTML}
           `
+
+    const yearSelectParent = div.querySelector('#yearSelectParent')
+    yearSelectParent.appendChild(this.createYearSelect())
   }
   setMonthHistory(mes) {
     const key = `historial-${this.timesheetInfo.id}-${this.timesheetInfo.start}`
     localStorage.setItem(key, JSON.stringify(mes))
   }
-  getYearHistory() {
+  createYearSelect() {
+    const yearSet = new Set()
+    for (let i = 0; i < this.allTimeSheets.length; i++) {
+      const ts = this.allTimeSheets[i]
+      yearSet.add(new Date(ts.start).getFullYear())
+    }
+    const years = Array.from(yearSet).sort().reverse()
+
+    const spanParent = document.createElement('span')
+    for (let year of years) {
+      const span = document.createElement('span')
+      span.style = 'display:inline-block;font-style:italic;padding:0 3px;cursor:pointer;background-color:#fff;margin-right:3px;'
+      span.style.boxShadow = '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)'
+      if(this.getYearSelectValue() == year){
+        span.style.color = '#FFF'
+        span.style.backgroundColor = '#00ACC1'
+      }
+      span.innerHTML = year
+      span.dataset.year = year
+      span.addEventListener('click', (e) => {
+        localStorage.setItem('year-selector-value', e.target.dataset.year)
+        this.pinta(this.lastMensaje)
+      })
+      spanParent.appendChild(span)
+    }
+    return spanParent
+  }
+  getYearSelectValue() {
+    const savedYear = localStorage.getItem('year-selector-value')
+    return savedYear == null ? new Date().getFullYear() : parseInt(savedYear)
+  }
+  getYearHistory(inputYear) {
     const year = {
       minutosATrabajar: 0,
       minTrabajadosMenosGuardias: 0,
@@ -437,20 +473,23 @@ class Bamboonomix {
     }
     for (let i = 0; i < this.allTimeSheets.length; i++) {
       const ts = this.allTimeSheets[i]
-      const key = `historial-${ts.id}-${ts.start}`
-      const mes = JSON.parse(localStorage.getItem(key))
       const date = new Date(ts.start)
-      const nombreMes = this.meses[date.getMonth()]
+      const tsYear = date.getFullYear()
+      if (inputYear == tsYear) {
+        const key = `historial-${ts.id}-${ts.start}`
+        const mes = JSON.parse(localStorage.getItem(key))
+        const nombreMes = this.meses[date.getMonth()]
 
-      if (mes != null) {
-        const horasRestantes = this.timePrintNegative(mes.minutosATrabajar - mes.minTrabajadosMenosGuardias)
-        year.months.push({ nombre: nombreMes, horas: horasRestantes })
+        if (mes != null) {
+          const horasRestantes = this.timePrintNegative(mes.minutosATrabajar - mes.minTrabajadosMenosGuardias)
+          year.months.push({ nombre: nombreMes, horas: horasRestantes, ts })
 
-        year.minutosGuardia += mes.minutosGuardia
-        year.minutosATrabajar += mes.minutosATrabajar
-        year.minTrabajadosMenosGuardias += mes.minTrabajadosMenosGuardias
-      } else {
-        year.months.push({ nombre: nombreMes, horas: 'sin cargar' })
+          year.minutosGuardia += mes.minutosGuardia
+          year.minutosATrabajar += mes.minutosATrabajar
+          year.minTrabajadosMenosGuardias += mes.minTrabajadosMenosGuardias
+        } else {
+          year.months.push({ nombre: nombreMes, horas: 'sin cargar', ts })
+        }
       }
     }
     return year
@@ -459,4 +498,5 @@ class Bamboonomix {
     return Math.floor(Math.random() * (max - min)) + min;
   }
 }
+window.Bamboonomix = Bamboonomix
 new Bamboonomix()
