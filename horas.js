@@ -126,7 +126,7 @@ class Bamboonomix {
       <span style="color:gray"> ${salida.getDate()} ${this.meses[salida.getMonth()]}</span>`
   }
   timePrint(minutos) {
-    let signo = Math.sign(minutos) >= 0 ? '' : '-'
+    let signo = Math.sign(minutos) >= 0 ? '' : '+'
     let horas = Math.abs(Math.trunc(minutos / 60))
     let mins = Math.abs(minutos % 60)
     return `${signo}${horas}h ${mins}m`
@@ -424,6 +424,7 @@ class Bamboonomix {
           <span style="${ks}"> de </span>
           <span style="${vs4}">${this.timePrint(year.minutosATrabajar)}</span>
           <span style="${vs5}">${this.timePrintNegative(year.minutosATrabajar - year.minTrabajadosMenosGuardias)}</span>
+          <br>
           ${guardiasAñoHTML}
           `
 
