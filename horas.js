@@ -417,11 +417,12 @@ class Bamboonomix {
             <span style="${m.horas == '0h 0m' ? ks : m.horas == 'sin cargar' ? ks : vs5}">${m.horas}</span><br>
           `).join(' ')}
           <br>
+          
+          <span style="${ks}">Restante hasta fin de ${year.months[0].nombre}:</span>
+          <br>
           <span style="${vs2}">${this.timePrint(year.minTrabajadosMenosGuardias)}</span>
           <span style="${ks}"> de </span>
           <span style="${vs4}">${this.timePrint(year.minutosATrabajar)}</span>
-          <br>
-          <span style="${ks}">Restante hasta fin de ${year.months[0].nombre}:</span>
           <span style="${vs5}">${this.timePrintNegative(year.minutosATrabajar - year.minTrabajadosMenosGuardias)}</span>
           ${guardiasAñoHTML}
           `
