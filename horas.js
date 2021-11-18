@@ -57,7 +57,7 @@ class Bamboonomix {
         let mensajeIdx = this.getRandomInt(0, msLen - 1)
         let mensaje = this.mensajesSubliminales[mensajeIdx]
         this.pinta(mensaje)
-        setInterval(() => { this.pinta(mensaje) }, 1000000)
+        setInterval(() => { this.pinta(mensaje) }, 10000)
         document.querySelector('#employeePhoto').style.display = 'none'
         document.querySelector('.PageHeader__titleWrap').style.display = 'none'
     }
