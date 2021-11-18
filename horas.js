@@ -57,9 +57,9 @@ class Bamboonomix {
         let mensajeIdx = this.getRandomInt(0, msLen - 1)
         let mensaje = this.mensajesSubliminales[mensajeIdx]
         this.pinta(mensaje)
-        setInterval(() => { this.pinta(mensaje) }, 10000)
-        document.querySelector('#employeePhoto').style.visibility = 'hidden'
-        document.querySelector('.PageHeader__titleWrap').style.visibility = 'hidden'
+        setInterval(() => { this.pinta(mensaje) }, 1000000)
+        document.querySelector('#employeePhoto').style.display = 'none'
+        document.querySelector('.PageHeader__titleWrap').style.display = 'none'
     }
     initTimesheetInfo() {
         var timesheetInfo = {}
@@ -126,14 +126,17 @@ class Bamboonomix {
         <span style="color:gray"> ${salida.getDate()} ${this.meses[salida.getMonth()]}</span>`
     }
     timePrint(minutos) {
-        let signo = Math.sign(minutos) >= 0 ? '' : '+'
         let horas = Math.abs(Math.trunc(minutos / 60))
         let mins = Math.abs(minutos % 60)
-        return `${signo}${horas}h ${mins}m`
+        return `${horas}h ${mins}m`
+    }
+    timePrintSign(minutos) {
+        let signo = Math.sign(minutos) >= 0 ? '-' : '+'
+        return `${signo}${this.timePrint(minutos)}`
     }
     timePrintNegative(minutos) {
         let stl = `color:#e53935;`
-        let res = this.timePrint(minutos)
+        let res = this.timePrintSign(minutos)
         if (minutos < 0) {
             return `<i style="${stl}">${res}</i>`
         } else {
@@ -257,19 +260,23 @@ class Bamboonomix {
     }
     pinta(mensaje) {
         this.lastMensaje = mensaje
-        const ks = `display:inline-block;color:#666;font-size:14px;`
-        const vs = `display:inline-block;`
-        const vs1 = `${vs}width:26px;color:#BA68C8;font-size:16px;`
-        const vs2 = `${vs}color:#4CAF50;font-size:16px`
-        const vs3 = `${vs}width:26px;color:#EC407A;font-size:16px`
-        const vs4 = `${vs}color:#039BE5;font-size:16px`
-        const vs5 = `${vs}color:#FF6F00;font-size:16px`
-        const vs6 = `${vs}color:#888;font-size:16px`
-        const vs7 = `${vs}color:#4CAF50;font-size:18px`
-        const vs8 = `${vs}color:#00ACC1;font-size:16px`
-        const vs9 = `${vs}color:#C2185B;font-size:16px`
-        const vs10 = `${vs}color:#BA68C8;font-size:16px`
-        const vs11 = `${vs}color:#ff0000;font-size:16px`
+        const tr = `background-color:transparent;`
+        const td = `padding:0;text-align: right;`
+        const ks = `color:#666;font-size:14px;`
+        const fks = `width:80px;${ks}`
+        const note = `font-style: italic;font-size:12px`
+        const vs = ``
+        const vs1 = `${vs}width:26px;color:#BA68C8;font-size:14px;`
+        const vs2 = `${vs}color:#4CAF50;font-size:14px`
+        const vs3 = `${vs}width:26px;color:#EC407A;font-size:14px`
+        const vs4 = `${vs}color:#039BE5;font-size:14px`
+        const vs5 = `${vs}color:#FF6F00;font-size:14px`
+        const vs6 = `${vs}color:#888;font-size:14px`
+        const vs7 = `${vs}color:#4CAF50;font-size:14px`
+        const vs8 = `${vs}color:#00ACC1;font-size:14px`
+        const vs9 = `${vs}color:#C2185B;font-size:14px`
+        const vs10 = `${vs}color:#BA68C8;font-size:14px`
+        const vs11 = `${vs}color:#ff0000;font-size:14px`
 
         var aux1 = document.querySelector('.TimesheetEntries')
         var diasMesConFinde = aux1.querySelectorAll('.TimesheetSlat:not(.TimesheetSlat--disabled)')
@@ -312,7 +319,9 @@ class Bamboonomix {
             div.id = 'infoextra'
 
             let closeCont = document.createElement('div')
-            closeCont.style = 'display:flex;align-items:center;justify-content:flex-end'
+            closeCont.style.position = 'absolute'
+            closeCont.style.top = '-22px'
+            closeCont.style.left = '0px'
             let close = document.createElement('div')
             close.style = `font-family:Times New Roman;font-style:italic;font-weight:bold;
                     background-color:#fafafa;
@@ -348,16 +357,21 @@ class Bamboonomix {
         var guardiasHastaHoyHTML = ``
         if (hastaHoy.minutosGuardia > 0) {
             guardiasHastaHoyHTML = `
-    <br>
-                <span style="${ks}">Guardias: </span>
-                <span style="${vs9}">${this.timePrint(hastaHoy.minutosGuardia)}</span>
+                <tr style="${tr}">
+                    <td></td>
+                    <td style="${td}${vs9}">${this.timePrint(hastaHoy.minutosGuardia)}</td>
+                    <td style="${td}${note}">Guardias</td>
+                </tr>
         `
         }
         var guardiasMesHTML = ``
         if (mes.minutosGuardia > 0) {
             guardiasMesHTML = `
-                <span style="${ks}">Guardias: </span>
-                <span style="${vs9}">${this.timePrint(mes.minutosGuardia)}</span>
+                <tr style="${tr}">
+                    <td></td>
+                    <td style="${td}${vs9}">${this.timePrint(mes.minutosGuardia)}</td>
+                    <td style="${td}${note}">Guardias</td>
+                </tr>
         `
         }
 
@@ -373,53 +387,90 @@ class Bamboonomix {
             ${hoyHTML}
   
             <span style="${ks}">Hoy</span>
-            <span style="${vs10};">día ${hastaHoy.diasATrabajar} de ${mes.diasATrabajar}</span>
-            <br>
-            <span style="${vs2}">${this.timePrint(hastaHoy.minTrabajadosMenosGuardias)}</span>
-            <span style="${ks}">&nbsp; de &nbsp;</span>
-            <span style="${vs4}">${this.timePrint(hastaHoy.minutosATrabajar)}</span>
-            <br>
-            <span style="${ks}"> Restante: </span>
-            <span style="${vs5}">${Bamboonomix.timeIcon}${this.timePrintNegative(hastaHoy.minutosATrabajar - hastaHoy.minTrabajadosMenosGuardias)}</span>
-            ${guardiasHastaHoyHTML}
+            <span style="${vs10};"><b>
+                ${hastaHoy.diasATrabajar + hastaHoy.mediosDiasATrabajar / 2}º</b> día de 
+                ${mes.diasATrabajar + mes.mediosDiasATrabajar / 2}</span>
+            <span style="${ks};"> laborables</span>
+            <table>
+                <tr style="${tr}">
+                    <td></td>
+                    <td style="${td}${vs4}">${this.timePrint(hastaHoy.minutosATrabajar)}</td>
+                    <td style="${td}${note}">${hastaHoy.diasATrabajar + hastaHoy.mediosDiasATrabajar / 2} x 7h 45m</td>
+                </tr>
+                <tr style="${tr}">
+                    <td style="${td}${vs2}">${Bamboonomix.timeIcon}</td>
+                    <td style="${td}${vs2}">${this.timePrint(hastaHoy.minTrabajadosMenosGuardias)}</td>
+                    <td style="${td}${note}">Curradas</td>
+                </tr>
+                <tr style="${tr}">
+                    <td style="${td}${vs5}">${Bamboonomix.timeIcon}</td>
+                    <td style="${td}${vs5}">${this.timePrintNegative(hastaHoy.minutosATrabajar - hastaHoy.minTrabajadosMenosGuardias)}</td>
+                    <td style="${td}${note}">Restantes</td>
+                </tr>
+                ${guardiasHastaHoyHTML}
+            </table>
+            
             <span style="${ks}"> Hora de salida: </span>
             <span style="${vs8}">${this.getHoraSalidaHoy(hastaHoy.minutosATrabajar - hastaHoy.minTrabajadosMenosGuardias)}</span>
   
             <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
   
-            <span style="${ks}">Este mes</span>
-            <br>
-            <span style="${vs2}">${this.timePrint(mes.minTrabajadosMenosGuardias)}</span>
-            <span style="${ks}">&nbsp; de &nbsp;</span>
-            <span style="${vs4}">${this.timePrint(mes.minutosATrabajar)}</span>
-            <br>
-            <span style="${ks}">Restante:</span>
-            <span style="${vs5}">${Bamboonomix.timeIcon}${this.timePrintNegative(mes.minutosATrabajar - mes.minTrabajadosMenosGuardias)}</span>
-            ${guardiasMesHTML}
-            <br>
-  
-            <span style="${vs1}">${mes.diasATrabajar + mes.mediosDiasATrabajar / 2}</span>
-            &nbsp;
-            <span style="${ks}">D&iacute;as de trabajo</span>
-            <br>
+            <span style="${ks}">Este mes</span><br>
+            <span style="${vs1}"><b>${mes.diasATrabajar + mes.mediosDiasATrabajar / 2}</b></span>
+            <span style="${ks}">días laborables</span><br>
             <span style="${vs3}">${mes.diasOtros}</span>
-            &nbsp;
-            <span style="${ks}">Otros d&iacute;as</span>
+            <span style="${ks}" title="Cualquier tipo de Time Off y Festivos">días no laborables</span>
+            <table>
+                <tr style="${tr}">
+                    <td></td>
+                    <td style="${td}${vs4}">${this.timePrint(mes.minutosATrabajar)}</td>
+                    <td style="${td}${note}">${mes.diasATrabajar + mes.mediosDiasATrabajar / 2} x 7h 45m</td>
+                </tr>
+                <tr style="${tr}">
+                    <td style="${td}${vs2}">${Bamboonomix.timeIcon}</td>
+                    <td style="${td}${vs2}">${this.timePrint(mes.minTrabajadosMenosGuardias)}</td>
+                    <td style="${td}${note}">Curradas</td>
+                </tr>
+                <tr style="${tr}">
+                    <td style="${td}${vs5}">${Bamboonomix.timeIcon}</td>
+                    <td style="${td}${vs5}">${this.timePrintNegative(mes.minutosATrabajar - mes.minTrabajadosMenosGuardias)}</td>
+                    <td style="${td}${note}">Restantes</td>
+                </tr>
+                ${guardiasMesHTML}
+            </table>
   
             <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
 
-            <span style="${ks}">Este año acumulado hasta ${year.months[1].nombre}</i></span>
+            <span style="${ks}">Este año acumulado hasta 
+                ${year.months[1] != null ? year.months[1].nombre : '?'}</span><br>
             <span style="${vs5}">${this.timePrintNegative(year.acumuladoHastaMesAnterior)}</span>
 
             <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
 
             <span style="${ks}">Este año hasta final de ${year.months[0].nombre}:</span>
             <br>
-            <span style="${vs2}">${this.timePrint(year.minTrabajadosMenosGuardias)}</span>
-            <span style="${ks}"> de </span>
-            <span style="${vs4}">${this.timePrint(year.minutosATrabajar)}</span>
-            <span style="${ks}">Restante: </span>
-            <span style="${vs5}">${Bamboonomix.timeIcon}${this.timePrintNegative(year.minutosATrabajar - year.minTrabajadosMenosGuardias)}</span>
+            <span style="${vs1}"><b>${year.diasATrabajar + year.mediosDiasATrabajar / 2}</b></span>
+            <span style="${ks}">días laborables</span><br>
+            <span style="${vs3}">${year.diasOtros}</span>
+            <span style="${ks}" title="Cualquier tipo de Time Off y Festivos">días no laborables</span>
+            <table>
+                <tr style="${tr}">
+                    <td></td>
+                    <td style="${td}${vs4}">${this.timePrint(year.minutosATrabajar)}</td>
+                    <td style="${td}${note}">${year.diasATrabajar + year.mediosDiasATrabajar / 2} x 7h 45m</td>
+                </tr>
+                <tr style="${tr}">
+                    <td style="${td}${vs2}">${Bamboonomix.timeIcon}</td>
+                    <td style="${td}${vs2}">${this.timePrint(year.minTrabajadosMenosGuardias)}</td>
+                    <td style="${td}${note}">Curradas</td>
+                </tr>
+                <tr style="${tr}">
+                    <td style="${td}${vs5}">${Bamboonomix.timeIcon}</td>
+                    <td style="${td}${vs5}">
+                        ${this.timePrintNegative(year.minutosATrabajar - year.minTrabajadosMenosGuardias)}</td>
+                    <td style="${td}${note}">Restantes</td>
+                </tr>
+            </table>
 
             <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
             <div id="yearSelectParent"></div>
@@ -474,7 +525,10 @@ class Bamboonomix {
             minTrabajadosMenosGuardias: 0,
             minutosGuardia: 0,
             acumuladoHastaMesAnterior: 0,
-            months: []
+            months: [],
+            diasATrabajar: 0,
+            mediosDiasATrabajar: 0,
+            diasOtros: 0,
         }
         for (let i = 0; i < this.allTimeSheets.length; i++) {
             const ts = this.allTimeSheets[i]
@@ -488,6 +542,9 @@ class Bamboonomix {
                 if (mes != null) {
                     const horasRestantes = this.timePrintNegative(mes.minutosATrabajar - mes.minTrabajadosMenosGuardias)
                     year.months.push({ nombre: nombreMes, horas: horasRestantes, ts })
+                    year.diasATrabajar += mes.diasATrabajar
+                    year.mediosDiasATrabajar += mes.mediosDiasATrabajar
+                    year.diasOtros += mes.diasOtros
 
                     year.minutosGuardia += mes.minutosGuardia
                     year.minutosATrabajar += mes.minutosATrabajar
