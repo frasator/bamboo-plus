@@ -466,13 +466,12 @@ class Bamboonomix {
                 </tr>
             </table>
 
+            <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
             <span style="${ks}">Este año acumulado hasta 
             <b>${year.months[1] != null ? year.months[1].nombre : '?'}</b></span><br>
             <span style="${vs5}">${this.timePrintNegative(year.acumuladoHastaMesAnterior)}</span>
-
             <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
-
-            <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
+            
             <div id="yearSelectParent"></div>
             ${year.months.map(m => `
               <span style="${m.horas == 'sin cargar' ? vs11 : ks};width:2.5em;">${m.nombre}:</span>
