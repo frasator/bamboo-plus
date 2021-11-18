@@ -442,12 +442,12 @@ class Bamboonomix {
             <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
 
             <span style="${ks}">Este año acumulado hasta 
-                ${year.months[1] != null ? year.months[1].nombre : '?'}</span><br>
+                <b>${year.months[1] != null ? year.months[1].nombre : '?'}</b></span><br>
             <span style="${vs5}">${this.timePrintNegative(year.acumuladoHastaMesAnterior)}</span>
 
             <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
 
-            <span style="${ks}">Este año hasta final de ${year.months[0].nombre}:</span>
+            <span style="${ks}">Este año hasta final de <b>${year.months[0].nombre}</b></span>
             <br>
             <span style="${vs1}"><b>${year.diasATrabajar + year.mediosDiasATrabajar / 2}</b></span>
             <span style="${ks}">días laborables</span><br>
