@@ -7,6 +7,9 @@ class Bamboonomix {
             return parseInt(mj)
         }
     }
+    setMinutosJornada(minutos) {
+        localStorage.setItem('minutosJornada', minutos)
+    }
     constructor() {
         if (window.location.href.indexOf('employees/timesheet/?id=') != -1) {
             this.meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
@@ -57,7 +60,7 @@ class Bamboonomix {
         let mensajeIdx = this.getRandomInt(0, msLen - 1)
         let mensaje = this.mensajesSubliminales[mensajeIdx]
         this.pinta(mensaje)
-        setInterval(() => { this.pinta(mensaje) }, 10000)
+        setInterval(() => { this.pinta(mensaje) }, 5000)
         document.querySelector('#employeePhoto').style.display = 'none'
         document.querySelector('.PageHeader__titleWrap').style.display = 'none'
     }
@@ -144,7 +147,8 @@ class Bamboonomix {
         }
     }
     calcMinutosTrabajo(dias, mediosDias) {
-        return (dias * (this.getMinutosJornada())) + (mediosDias * 4 * 60)
+        const minutosMedioDia = (this.getMinutosJornada() + 15) / 2
+        return (dias * (this.getMinutosJornada())) + (mediosDias * minutosMedioDia)
     }
     parseTimeText(el) {
         let textTime = el.querySelector('.TimesheetSlat__dayTotal').innerText
@@ -319,15 +323,34 @@ class Bamboonomix {
             div.id = 'infoextra'
 
             let closeCont = document.createElement('div')
+            closeCont.style.width = '100%'
             closeCont.style.position = 'absolute'
             closeCont.style.top = '-22px'
             closeCont.style.left = '0px'
+            closeCont.style.display = 'flex'
             let close = document.createElement('div')
-            close.style = `font-family:Times New Roman;font-style:italic;font-weight:bold;
+            close.style = `font-style:italic;font-weight:bold;
                     background-color:#fafafa;
                     cursor:pointer;padding:2px 7px 3px 7px;line-height:15px;border:1px solid #ddd;`
             close.innerHTML = 'Ocultar'
             closeCont.appendChild(close)
+            let separator = document.createElement('div')
+            separator.style.width = '5px'
+            closeCont.appendChild(separator)
+            let minJorInput = document.createElement('div')
+            minJorInput.innerHTML = "Minutos"
+            minJorInput.style = `font-style:italic;font-weight:bold;
+                    background-color:#fafafa;
+                    cursor:pointer;padding:2px 7px 3px 7px;line-height:15px;border:1px solid #ddd;`
+            minJorInput.addEventListener('click', e => {
+                const res = window.prompt("Modifica los minutos de una jornada, tendrás que revisitar todos los meses.", this.getMinutosJornada())
+                const minutos = parseInt(res)
+                if(!isNaN(minutos)){
+                    this.setMinutosJornada(minutos)
+                    this.pinta(this.lastMensaje)
+                }
+            })
+            closeCont.appendChild(minJorInput)
 
             close.addEventListener('click', e => {
                 if (div.style.display == 'none') {
@@ -350,6 +373,8 @@ class Bamboonomix {
                 <span style="${ks}">Hoy: </span>
                 <span style="${vs7}">${parsedHoy.hours}h ${parsedHoy.minutes}m</span>
                 ${((parsedHoy.hours * 60) + parsedHoy.minutes >= this.getMinutosJornada()) ? `<br><span style="${vs6}">${mensaje}</span>` : ''}
+                <span style="${ks}"> de </span>
+                <span style="${vs4}">${this.timePrint(this.getMinutosJornada())}</span>
                 <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
         `
         }
@@ -386,7 +411,6 @@ class Bamboonomix {
         div.innerHTML = `
             ${hoyHTML}
   
-            <span style="${ks}">Hoy</span>
             <span style="${vs10};"><b>
                 ${hastaHoy.diasATrabajar + hastaHoy.mediosDiasATrabajar / 2}º</b> día de 
                 ${mes.diasATrabajar + mes.mediosDiasATrabajar / 2}</span>
@@ -395,7 +419,8 @@ class Bamboonomix {
                 <tr style="${tr}">
                     <td></td>
                     <td style="${td}${vs4}">${this.timePrint(hastaHoy.minutosATrabajar)}</td>
-                    <td style="${td}${note}">${hastaHoy.diasATrabajar + hastaHoy.mediosDiasATrabajar / 2} x 7h 45m</td>
+                    <td style="${td}${note}">${hastaHoy.diasATrabajar + hastaHoy.mediosDiasATrabajar / 2} x 
+                        ${this.timePrint(this.getMinutosJornada())}</td>
                 </tr>
                 <tr style="${tr}">
                     <td style="${td}${vs2}">${Bamboonomix.timeIcon}</td>
@@ -424,7 +449,7 @@ class Bamboonomix {
                 <tr style="${tr}">
                     <td></td>
                     <td style="${td}${vs4}">${this.timePrint(mes.minutosATrabajar)}</td>
-                    <td style="${td}${note}">${mes.diasATrabajar + mes.mediosDiasATrabajar / 2} x 7h 45m</td>
+                    <td style="${td}${note}">${mes.diasATrabajar + mes.mediosDiasATrabajar / 2} x ${this.timePrint(this.getMinutosJornada())}</td>
                 </tr>
                 <tr style="${tr}">
                     <td style="${td}${vs2}">${Bamboonomix.timeIcon}</td>
@@ -451,7 +476,7 @@ class Bamboonomix {
                 <tr style="${tr}">
                     <td></td>
                     <td style="${td}${vs4}">${this.timePrint(year.minutosATrabajar)}</td>
-                    <td style="${td}${note}">${year.diasATrabajar + year.mediosDiasATrabajar / 2} x 7h 45m</td>
+                    <td style="${td}${note}">${year.diasATrabajar + year.mediosDiasATrabajar / 2} x ${this.timePrint(this.getMinutosJornada())}</td>
                 </tr>
                 <tr style="${tr}">
                     <td style="${td}${vs2}">${Bamboonomix.timeIcon}</td>
