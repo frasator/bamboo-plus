@@ -402,9 +402,11 @@ class Bamboonomix {
 
 
         let year = this.getYearHistory(this.getYearSelectValue())
-        var guardiasAñoHTML = (year.minutosGuardia > 0) ?
-            `<span style="${ks}">Guardias: </span>
-       <span style="${vs9}">${this.timePrint(year.minutosGuardia)}</span>
+        var guardiasAñoHTML = (year.minutosGuardia > 0) ? `
+            <div style="margin-top:1em">
+                <span>Guardias:</span>
+                <span style="${vs9}">${this.timePrint(year.minutosGuardia)}</span>
+            </div>
       ` : ``
 
 
