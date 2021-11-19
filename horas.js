@@ -345,7 +345,7 @@ class Bamboonomix {
             minJorInput.addEventListener('click', e => {
                 const res = window.prompt("Modifica los minutos de una jornada, tendrás que revisitar todos los meses.", this.getMinutosJornada())
                 const minutos = parseInt(res)
-                if(!isNaN(minutos)){
+                if (!isNaN(minutos)) {
                     this.setMinutosJornada(minutos)
                     this.pinta(this.lastMensaje)
                 }
@@ -498,10 +498,15 @@ class Bamboonomix {
             <div style="height:1px;background-color:lightgray;margin:10px 0"></div>
             
             <div id="yearSelectParent"></div>
+            <table>
             ${year.months.map(m => `
-              <span style="${m.horas == 'sin cargar' ? vs11 : ks};width:2.5em;">${m.nombre}:</span>
-              <span style="${m.horas == '0h 0m' ? ks : m.horas == 'sin cargar' ? ks : vs5}">${m.horas}</span><br>
+                <tr style="${tr}">
+                    <td style="${td}${m.horas == 'sin cargar' ? vs11 : ks}">${m.nombre}</td>
+                    <td style="${td}${m.horas == '0h 0m' ? ks : m.horas == 'sin cargar' ? ks : vs5}">${m.horas}</td>
+                    <td style="${td}${note}">${m.minutosJornada}</td>
+                </tr>
             `).join(' ')}
+            </table>
             ${guardiasAñoHTML}
             `
 
@@ -510,6 +515,7 @@ class Bamboonomix {
     }
     setMonthHistory(mes) {
         const key = `historial-${this.timesheetInfo.id}-${this.timesheetInfo.start}`
+        mes.minutosJornada = this.getMinutosJornada()
         localStorage.setItem(key, JSON.stringify(mes))
     }
     createYearSelect() {
@@ -562,10 +568,10 @@ class Bamboonomix {
                 const key = `historial-${ts.id}-${ts.start}`
                 const mes = JSON.parse(localStorage.getItem(key))
                 const nombreMes = this.meses[date.getMonth()]
-
+                const minutosJornada = mes.minutosJornada != null ? this.timePrint(mes.minutosJornada) : ''
                 if (mes != null) {
                     const horasRestantes = this.timePrintNegative(mes.minutosATrabajar - mes.minTrabajadosMenosGuardias)
-                    year.months.push({ nombre: nombreMes, horas: horasRestantes, ts })
+                    year.months.push({ nombre: nombreMes, horas: horasRestantes, ts, minutosJornada })
                     year.diasATrabajar += mes.diasATrabajar
                     year.mediosDiasATrabajar += mes.mediosDiasATrabajar
                     year.diasOtros += mes.diasOtros
@@ -577,7 +583,7 @@ class Bamboonomix {
                         year.acumuladoHastaMesAnterior += mes.minutosATrabajar - mes.minTrabajadosMenosGuardias
                     }
                 } else {
-                    year.months.push({ nombre: nombreMes, horas: 'sin cargar', ts })
+                    year.months.push({ nombre: nombreMes, horas: 'sin cargar', ts, minutosJornada })
                 }
             }
         }
