@@ -570,7 +570,7 @@ class Bamboonomix {
                 const key = `historial-${ts.id}-${ts.start}`
                 const mes = JSON.parse(localStorage.getItem(key))
                 const nombreMes = this.meses[date.getMonth()]
-                const minutosJornada = mes.minutosJornada != null ? this.timePrint(mes.minutosJornada) : ''
+                const minutosJornada = mes != null && mes.minutosJornada != null ? this.timePrint(mes.minutosJornada) : ''
                 if (mes != null) {
                     const horasRestantes = this.timePrintNegative(mes.minutosATrabajar - mes.minTrabajadosMenosGuardias)
                     year.months.push({ nombre: nombreMes, horas: horasRestantes, ts, minutosJornada })
