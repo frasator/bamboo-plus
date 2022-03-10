@@ -14,6 +14,7 @@ class Bamboonomix {
       if (window.location.href.indexOf('employees/timesheet/?id=') != -1) {
           this.meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
           this.mensajesSubliminales = [
+              'Toma el control de tus testículos!',
               'Vete a casa o te reviento!',
               'Qué haces aquí matat!',
               'Eres un puto loser!',
