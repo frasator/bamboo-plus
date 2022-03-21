@@ -177,26 +177,28 @@ class Bamboonomix {
 
             /* Trabajados */
             let parsed_a = this.parseTimeText(el)
-            minutosTrabajados += parsed_a.hours * 60
-            minutosTrabajados += parsed_a.minutes
-
-            /* A trabajar */
+            
             let extra = el.querySelector('.TimesheetSlat__extraInfoItem--clockPush')
 
+            if (extra != null && extra.innerText.indexOf('hours Medical Appointments') != -1) {
+                // No sumamos las horas de un medical apoointment
+            }else{
+                minutosTrabajados += parsed_a.hours * 60
+                minutosTrabajados += parsed_a.minutes
+            }
+
+            /* A trabajar */
             if (dayName != "sat" && dayName != "sun" && dayName != "sáb" && dayName != "dom") {
                 if (dia.holidays.length > 0) {
                     diasOtros++
                 } else if (dia.timeOff.length > 0) {
-                    if (dia.timeOffHours == 4) {
+                    const entry = dia.timeOff[0]
+                    if (dia.timeOffHours == 4 && entry != null && entry.amount == 0.5 && entry.type == 'Holidays') {
                         diasOtros += 0.5
                         mediosDiasATrabajar += 1
                     } else {
                         diasOtros++
                     }
-                } else if (extra != null && extra.innerText.indexOf('hours Medical Appointments') != -1) {
-                    let parsed = this.parseTimeText(el)
-                    minutosMedicalAppointments += parsed.hours * 60
-                    minutosMedicalAppointments += parsed.minutes
                 } else {
                     diasATrabajar++
                 }
