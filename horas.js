@@ -193,7 +193,9 @@ class Bamboonomix {
                     diasOtros++
                 } else if (dia.timeOff.length > 0) {
                     const entry = dia.timeOff[0]
-                    if (dia.timeOffHours == 4 && entry != null && entry.amount == 0.5 && entry.type == 'Holidays') {
+                    if (dia.timeOffHours == 4 && entry != null && entry.amount == 0.5 && 
+                       ( entry.type == 'Holidays' || entry.type == 'Additional Days Off' || entry.type == 'Private Leave')
+                    ) {
                         diasOtros += 0.5
                         mediosDiasATrabajar += 1
                     } else {
